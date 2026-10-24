@@ -1,15 +1,14 @@
 let userBalance = 150.0;
-let userDrops = 100; // 水滴
-let userPoints = 10; // 预设 10 积分
-let treeProgress = 40; // 树苗进度 0-100%
+let userDrops = 100; //water
+let userPoints = 10; // assume 10 point
+let treeProgress = 40; // tree process
 let totalDropsEarned = 120;
 let totalPointsEarned = 10;
 let totalPointsSpent = 0;
 let redeemedVouchers = [];
 let hasDigitalSwitchDiscount = false;
-let hasClaimedMixuePromo = false; // 新增：标记 MIXUE 免费券是否已领取
+let hasClaimedMixuePromo = false; 
 
-// 5 道防诈测试题目
 const quizData = [
   {
     question:
