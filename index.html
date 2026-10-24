@@ -1,0 +1,897 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Pay Safe - Campus Digital Payment Ecosystem</title>
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- FontAwesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ["Plus Jakarta Sans", "sans-serif"],
+          },
+          colors: {
+            brand: {
+              50: "#f0f7ff",
+              100: "#e0effe",
+              500: "#2563eb",
+              600: "#1d4ed8",
+              700: "#1e40af",
+            },
+            accent: {
+              50: "#f0fdf4",
+              500: "#10b981",
+              600: "#059669",
+            },
+          },
+        },
+      },
+    };
+  </script>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body class="font-sans antialiased min-h-screen flex flex-col justify-between custom-scrollbar">
+
+  <!-- Top Navigation & Header Status Bar -->
+  <header class="sticky top-0 z-40 bg-white/90 backdrop-blur-md border-b border-slate-200 shadow-sm">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+      
+      <!-- Logo & App Identity -->
+      <div class="flex items-center space-x-3 cursor-pointer" onclick="switchTab('home')">
+        <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-blue-600 to-indigo-600 flex items-center justify-center text-white shadow-md shadow-blue-500/20 shrink-0">
+          <i class="fa-solid fa-shield-halved text-xl"></i>
+        </div>
+        <div class="flex flex-col items-start">
+          <h1 class="text-xl font-extrabold tracking-tight bg-gradient-to-r from-blue-700 to-indigo-800 bg-clip-text text-transparent leading-none mb-0.5">
+            Pay Safe
+          </h1>
+          <p class="text-[10px] font-semibold text-slate-400 tracking-wider uppercase leading-none">
+            UUM Digital Campus Ecosystem
+          </p>
+        </div>
+      </div>
+
+      <!-- Header Status Badges -->
+      <div class="flex items-center space-x-2 sm:space-x-3">
+        <!-- Balance Badge -->
+        <button onclick="openBalanceModal()" class="flex items-center space-x-2 bg-emerald-50 hover:bg-emerald-100/80 border border-emerald-200 px-3 py-1.5 rounded-full transition-all duration-200 group shadow-sm">
+          <div class="w-6 h-6 rounded-full bg-emerald-500 text-white flex items-center justify-center text-xs shadow-sm">
+            <i class="fa-solid fa-wallet"></i>
+          </div>
+          <div class="text-left hidden sm:block">
+            <span class="text-[10px] block font-bold text-emerald-600 uppercase tracking-wider leading-none">Balance</span>
+            <span id="header-balance" class="text-xs font-extrabold text-emerald-700">RM 150.00</span>
+          </div>
+        </button>
+
+        <!-- Water Drops Badge -->
+        <div class="flex items-center space-x-1.5 bg-cyan-50 border border-cyan-200 px-3 py-1.5 rounded-full shadow-sm">
+          <i class="fa-solid fa-droplet text-cyan-500 text-xs"></i>
+          <span id="header-drops" class="text-xs font-extrabold text-cyan-700">40 Drops</span>
+        </div>
+
+        <!-- Points Badge -->
+        <button onclick="openPointsModal()" class="flex items-center space-x-2 bg-amber-50 hover:bg-amber-100/80 border border-amber-200 px-3 py-1.5 rounded-full transition-all duration-200 group shadow-sm">
+          <div class="w-6 h-6 rounded-full bg-amber-500 text-white flex items-center justify-center text-xs shadow-sm">
+            <i class="fa-solid fa-star"></i>
+          </div>
+          <div class="text-left hidden sm:block">
+            <span class="text-[10px] block font-bold text-amber-600 uppercase tracking-wider leading-none">Points</span>
+            <span id="header-points" class="text-xs font-extrabold text-amber-700">10 PTS</span>
+          </div>
+        </button>
+
+        <!-- Login Button -->
+        <button onclick="openLoginModal()" class="flex items-center space-x-2 bg-slate-900 hover:bg-slate-800 px-4 py-2 rounded-xl transition-all duration-200 shadow-sm text-white">
+          <i class="fa-solid fa-user text-xs"></i>
+          <span class="text-xs font-bold tracking-wider leading-none">Login</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Navigation Tabs -->
+    <nav class="bg-slate-50 border-t border-slate-200/80 px-4">
+      <div class="max-w-7xl mx-auto flex space-x-2 py-2 overflow-x-auto custom-scrollbar">
+        <button onclick="switchTab('home')" id="tab-home" class="nav-btn active px-4 py-2 rounded-xl text-xs font-bold transition-all flex items-center space-x-2 whitespace-nowrap">
+          <i class="fa-solid fa-house"></i>
+          <span>Home</span>
+        </button>
+        <button onclick="switchTab('discover')" id="tab-discover" class="nav-btn px-4 py-2 rounded-xl text-xs font-bold text-slate-600 hover:text-slate-900 hover:bg-slate-200/60 transition-all flex items-center space-x-2 whitespace-nowrap">
+          <i class="fa-solid fa-map-location-dot"></i>
+          <span>Discover</span>
+        </button>
+        <button onclick="switchTab('payment')" id="tab-payment" class="nav-btn px-4 py-2 rounded-xl text-xs font-bold text-slate-600 hover:text-slate-900 hover:bg-slate-200/60 transition-all flex items-center space-x-2 whitespace-nowrap">
+          <i class="fa-solid fa-qrcode"></i>
+          <span>Do Payment</span>
+        </button>
+        <button onclick="switchTab('educator')" id="tab-educator" class="nav-btn px-4 py-2 rounded-xl text-xs font-bold text-slate-600 hover:text-slate-900 hover:bg-slate-200/60 transition-all flex items-center space-x-2 whitespace-nowrap">
+          <i class="fa-solid fa-graduation-cap"></i>
+          <span>Educator & Quiz</span>
+        </button>
+        <button onclick="switchTab('rewards')" id="tab-rewards" class="nav-btn px-4 py-2 rounded-xl text-xs font-bold text-slate-600 hover:text-slate-900 hover:bg-slate-200/60 transition-all flex items-center space-x-2 whitespace-nowrap">
+          <i class="fa-solid fa-gift"></i>
+          <span>Rewards</span>
+        </button>
+        <button onclick="switchTab('trust')" id="tab-trust" class="nav-btn px-4 py-2 rounded-xl text-xs font-bold text-slate-600 hover:text-slate-900 hover:bg-slate-200/60 transition-all flex items-center space-x-2 whitespace-nowrap">
+          <i class="fa-solid fa-shield-cat"></i>
+          <span>Trusted Gateways</span>
+        </button>
+      </div>
+    </nav>
+  </header>
+
+  <!-- Main Content Container -->
+  <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 flex-grow w-full">
+
+    <!-- PAGE 1: HOME DASHBOARD -->
+    <section id="page-home" class="space-y-8">
+      <!-- Welcome Banner -->
+      <div class="relative overflow-hidden rounded-3xl bg-gradient-to-r from-blue-600 via-indigo-600 to-blue-700 p-8 text-white shadow-xl">
+        <div class="relative z-10 max-w-2xl">
+          <span class="inline-block px-3 py-1 bg-white/20 backdrop-blur-md rounded-full text-xs font-semibold mb-3 border border-white/30">
+            👋 Welcome back, UUM Community
+          </span>
+
+          <div class="flex justify-left py-2">
+            <img src="assets/images/UUM_Logo.png" alt="UUM Logo" class="w-16 h-auto" />
+          </div>
+
+          <h2 class="text-3xl font-extrabold tracking-tight sm:text-4xl">
+            Make Campus Payments Safe, Fast & Rewarding
+          </h2>
+
+          <p class="mt-3 text-blue-100 text-sm leading-relaxed">
+            Pay Safe helps students and vendors across Universiti Utara Malaysia adopt seamless digital payment habits through instant rewards, gamified learning, and verified safety tools.
+          </p>
+
+          <div class="mt-6 flex flex-wrap gap-3">
+            <button onclick="switchTab('payment')" class="px-5 py-2.5 bg-white text-blue-700 font-bold rounded-xl shadow-lg hover:bg-blue-50 transition-all text-xs flex items-center space-x-2">
+              <i class="fa-solid fa-qrcode"></i>
+              <span>Try QR Payment Simulator</span>
+            </button>
+            <button onclick="switchTab('educator')" class="px-5 py-2.5 bg-blue-800/60 hover:bg-blue-800/80 text-white font-bold rounded-xl border border-white/20 transition-all text-xs flex items-center space-x-2">
+              <i class="fa-solid fa-shield-check"></i>
+              <span>Take Scam Shield Quiz</span>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Water Tree Game Mini Widget -->
+      <div class="glass-card rounded-3xl p-6 border-2 border-emerald-200 bg-gradient-to-r from-emerald-50/50 to-teal-50/50 shadow-md">
+        <div class="flex flex-col md:flex-row items-center justify-between gap-6">
+          <div class="flex items-center space-x-5">
+            <div class="w-24 h-24 rounded-2xl bg-emerald-100/80 border border-emerald-300 flex items-center justify-center shadow-inner overflow-hidden">
+              <i id="tree-icon" class="fa-solid fa-seedling text-3xl text-emerald-500 animate-bounce"></i>
+            </div>
+            <div>
+              <span class="px-2.5 py-0.5 bg-emerald-100 text-emerald-800 rounded-full text-[10px] font-bold">Campus Eco Tree Game</span>
+              <h3 class="text-lg font-extrabold text-slate-800 mt-1">Water Your Tree for Points!</h3>
+              <p class="text-xs text-slate-500">Every 100 Drops (100% Growth) turns into <strong>1 PTS</strong> for voucher redemption!</p>
+            </div>
+          </div>
+
+          <div class="w-full md:w-auto flex-grow max-w-md space-y-2">
+            <div class="flex justify-between text-xs font-bold">
+              <span class="text-slate-600">Tree Growth Progress</span>
+              <span id="tree-progress-text" class="text-emerald-700">40% GROWN</span>
+            </div>
+            <div class="w-full bg-slate-200 rounded-full h-4 overflow-hidden border border-slate-300">
+              <div id="tree-progress-bar" class="bg-gradient-to-r from-emerald-400 to-teal-600 h-4 rounded-full transition-all duration-500" style="width: 40%"></div>
+            </div>
+            <div class="flex items-center justify-between pt-1">
+              <span class="text-[11px] text-slate-500">Available Water: <strong id="tree-water-drops" class="text-cyan-600">40 Drops</strong></span>
+              <button onclick="waterTree()" class="px-5 py-2 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white font-bold rounded-xl text-xs shadow-md shadow-emerald-500/20 transition-all flex items-center space-x-1.5">
+                <i class="fa-solid fa-droplet text-cyan-300"></i>
+                <span>Water Tree (-10 Drops)</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Campus Milestone Progress -->
+      <div class="glass-card rounded-2xl p-6 shadow-sm border border-slate-200">
+        <div class="flex items-center justify-between mb-4">
+          <div>
+            <h3 class="text-base font-bold text-slate-800">UUM Campus Digital Milestone</h3>
+            <p class="text-xs text-slate-500">Collective campus target to unlock 10% cashbacks for all student cafeterias.</p>
+          </div>
+          <span class="text-xs font-extrabold text-blue-600 bg-blue-50 px-3 py-1 rounded-full border border-blue-100">82,450 / 100,000 Tx</span>
+        </div>
+        <div class="w-full bg-slate-100 rounded-full h-3 overflow-hidden">
+          <div class="bg-gradient-to-r from-blue-500 to-indigo-600 h-3 rounded-full transition-all duration-1000" style="width: 82%"></div>
+        </div>
+      </div>
+
+      <!-- Why Use Digital Payment Section -->
+      <div>
+        <h3 class="text-lg font-bold text-slate-900 mb-4">Why Switch to Digital Payments on Campus?</h3>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div class="glass-card rounded-2xl p-6 border border-slate-200 shadow-sm hover:shadow-md transition-all">
+            <div class="w-12 h-12 bg-blue-50 text-blue-600 rounded-xl flex items-center justify-center text-xl mb-4">
+              <i class="fa-solid fa-bolt-lightning"></i>
+            </div>
+            <h4 class="font-bold text-slate-800 text-sm mb-2">Zero Queue Time</h4>
+            <p class="text-xs text-slate-500 leading-relaxed">No need to wait for loose change at busy student cafes. Scan DuitNow QR and finish transactions in 3 seconds.</p>
+          </div>
+          <div class="glass-card rounded-2xl p-6 border border-slate-200 shadow-sm hover:shadow-md transition-all">
+            <div class="w-12 h-12 bg-emerald-50 text-emerald-600 rounded-xl flex items-center justify-center text-xl mb-4">
+              <i class="fa-solid fa-shield-virus"></i>
+            </div>
+            <h4 class="font-bold text-slate-800 text-sm mb-2">Anti-Scam Verification</h4>
+            <p class="text-xs text-slate-500 leading-relaxed">Integrated real-time merchant verification ensures every transaction goes directly to authorized campus merchants.</p>
+          </div>
+          <div class="glass-card rounded-2xl p-6 border border-slate-200 shadow-sm hover:shadow-md transition-all">
+            <div class="w-12 h-12 bg-amber-50 text-amber-600 rounded-xl flex items-center justify-center text-xl mb-4">
+              <i class="fa-solid fa-gift"></i>
+            </div>
+            <h4 class="font-bold text-slate-800 text-sm mb-2">Earn Meals & Vouchers</h4>
+            <p class="text-xs text-slate-500 leading-relaxed">Earn Water Drops on every valid transaction. Water your tree to earn Points for free drinks, printing vouchers, and library discounts.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- PAGE 2: DISCOVER MERCHANTS -->
+    <section id="page-discover" class="hidden space-y-8">
+      <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
+        <div>
+          <h2 class="text-2xl font-bold text-slate-900">Discover Campus Merchants</h2>
+          <p class="text-xs text-slate-500 mt-1">Find participating stalls and live promos across UUM.</p>
+        </div>
+
+        <div class="bg-amber-100 border border-amber-300 text-amber-800 px-4 py-2 rounded-xl flex items-center space-x-3 shadow-sm animate-pulse">
+          <div class="bg-amber-500 text-white w-6 h-6 rounded-full flex items-center justify-center text-xs">
+            <i class="fa-solid fa-fire"></i>
+          </div>
+          <span class="text-sm font-bold">2x Water Drops at Kafe SME Bank today!</span>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+        <!-- Merchant 1: Kafe Sambal Hijau -->
+        <div class="glass-card rounded-2xl p-5 border border-amber-200 shadow-sm flex flex-col justify-between space-y-4 relative overflow-hidden ring-2 ring-amber-400/50">
+          <div class="absolute top-0 right-0 bg-amber-500 text-white text-[10px] font-bold px-3 py-1 rounded-bl-lg z-10 shadow-sm">
+            HOT PROMO
+          </div>
+          <div class="flex items-center space-x-3">
+            <div class="w-12 h-12 bg-amber-100 text-amber-700 rounded-xl flex items-center justify-center text-xl font-bold">
+              <i class="fa-solid fa-burger"></i>
+            </div>
+            <div>
+              <h3 class="font-bold text-slate-800 text-sm">Kafe Sambal Hijau (Masakan Panas)</h3>
+              <p class="text-[10px] text-slate-500"><i class="fa-solid fa-location-dot mr-1 text-slate-400"></i>Inasis SME BANK</p>
+            </div>
+          </div>
+          <div class="pt-3 border-t border-slate-100">
+            <span class="text-[11px] font-bold text-amber-700 bg-amber-50 px-2 py-1.5 rounded-lg border border-amber-200 block text-center">
+              🔥 Earn 20 Water Drops per transaction
+            </span>
+          </div>
+        </div>
+
+        <!-- Merchant 2: Varsity Mall Grocer -->
+        <div class="glass-card rounded-2xl p-5 border border-slate-200 shadow-sm flex flex-col justify-between space-y-4 relative overflow-hidden hover:shadow-md transition-all">
+          <div class="absolute top-0 right-0 bg-blue-500 text-white text-[10px] font-bold px-3 py-1 rounded-bl-lg z-10">
+            CASHBACK
+          </div>
+          <div class="flex items-center space-x-3">
+            <div class="w-12 h-12 bg-blue-100 text-blue-700 rounded-xl flex items-center justify-center text-xl font-bold">
+              <i class="fa-solid fa-basket-shopping"></i>
+            </div>
+            <div>
+              <h3 class="font-bold text-slate-800 text-sm">Varsity Mall Grocer</h3>
+              <p class="text-[10px] text-slate-500"><i class="fa-solid fa-location-dot mr-1 text-slate-400"></i>Varsity Mall Main Wing</p>
+            </div>
+          </div>
+          <div class="pt-3 border-t border-slate-100">
+            <span class="text-[11px] font-semibold text-blue-700 bg-blue-50 px-2 py-1.5 rounded-lg border border-blue-200 block text-center">
+              RM 1.00 Off on spending > RM 15
+            </span>
+          </div>
+        </div>
+
+        <!-- Merchant 3: Library Cafe -->
+        <div class="glass-card rounded-2xl p-5 border border-slate-200 shadow-sm flex flex-col justify-between space-y-4 relative overflow-hidden hover:shadow-md transition-all">
+          <div class="flex items-center space-x-3">
+            <div class="w-12 h-12 bg-emerald-100 text-emerald-700 rounded-xl flex items-center justify-center text-xl font-bold">
+              <i class="fa-solid fa-mug-hot"></i>
+            </div>
+            <div>
+              <h3 class="font-bold text-slate-800 text-sm">Library Cafe</h3>
+              <p class="text-[10px] text-slate-500"><i class="fa-solid fa-location-dot mr-1 text-slate-400"></i>Sultanah Bahiyah Library</p>
+            </div>
+          </div>
+          <div class="pt-3 border-t border-slate-100">
+            <span class="text-[11px] font-semibold text-slate-600 bg-slate-50 px-2 py-1.5 rounded-lg border border-slate-200 block text-center">
+              Standard Rate: +20 Drops 💧
+            </span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- PAGE 3: DO PAYMENT SIMULATOR -->
+    <section id="page-payment" class="hidden space-y-8">
+      <div class="max-w-3xl mx-auto space-y-6">
+        <div class="text-center">
+          <h2 class="text-2xl font-bold text-slate-900">Payment Simulator</h2>
+          <p class="text-xs text-slate-500 mt-1">Practice making seamless & safe digital payments using simulated campus accounts.</p>
+        </div>
+
+        <div class="glass-card rounded-3xl p-6 border border-slate-200 shadow-lg space-y-6">
+          <div class="flex bg-slate-100 p-1 rounded-xl">
+            <button onclick="setPayMode('qr')" id="btn-mode-qr" class="flex-1 py-2 text-xs font-bold rounded-lg bg-white text-blue-600 shadow-sm transition-all">
+              <i class="fa-solid fa-qrcode mr-1"></i> Scan DuitNow QR
+            </button>
+            <button onclick="setPayMode('acc')" id="btn-mode-acc" class="flex-1 py-2 text-xs font-bold rounded-lg text-slate-600 hover:text-slate-900 transition-all">
+              <i class="fa-solid fa-arrow-right-arrow-left mr-1"></i> Account Number
+            </button>
+          </div>
+
+          <div id="section-merchant-selector" class="space-y-2">
+            <label class="text-xs font-bold text-slate-700">Select Campus Merchant:</label>
+            <select id="sim-merchant" onchange="updateSimAmount()" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 text-xs font-medium focus:ring-2 focus:ring-blue-500 outline-none">
+              <option value="Inasis Canteen (Stall 4)" data-price="8.50">Inasis Canteen (Stall 4 - Nasi Kandar) - RM 8.50</option>
+              <option value="Library Cafe & Printing" data-price="4.00">Library Cafe & Printing - RM 4.00</option>
+              <option value="Varsity Mall Supermarket" data-price="18.20">Varsity Mall Supermarket - RM 18.20</option>
+              <option value="UUM Bus Shuttle Counter" data-price="2.00">UUM Bus Shuttle Counter - RM 2.00</option>
+            </select>
+          </div>
+
+          <div id="sim-qr-box" class="relative rounded-2xl overflow-hidden bg-slate-900 h-52 flex flex-col items-center justify-center text-white border border-slate-700">
+            <div class="absolute inset-0 opacity-20 bg-[radial-gradient(#3b82f6_1px,transparent_1px)] [background-size:16px_16px]"></div>
+            <div class="w-32 h-32 border-2 border-dashed border-blue-400 rounded-xl flex items-center justify-center relative animate-pulse">
+              <i class="fa-solid fa-qrcode text-5xl text-blue-400"></i>
+            </div>
+            <p class="text-[11px] font-semibold text-slate-300 mt-3 z-10">Target Scanning DuitNow Merchant Code...</p>
+          </div>
+
+          <div id="sim-acc-box" class="hidden space-y-3">
+            <div>
+              <label class="text-xs font-bold text-slate-700">Recipient Account Number:</label>
+              <input type="text" id="sim-acc-no" value="1029384756 (UUM Merchant)" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 text-xs font-mono font-medium focus:ring-2 focus:ring-blue-500 outline-none" />
+            </div>
+          </div>
+
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2 border-t border-slate-100">
+            <div>
+              <label class="text-xs font-bold text-slate-700">Amount (RM):</label>
+              <input type="number" id="sim-amount" value="8.50" step="0.50" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 text-sm font-extrabold text-blue-700 focus:ring-2 focus:ring-blue-500 outline-none" />
+            </div>
+            <div class="flex items-end">
+              <div class="w-full bg-emerald-50 border border-emerald-200 rounded-xl p-2.5 flex items-center space-x-2">
+                <i class="fa-solid fa-shield-check text-emerald-600 text-lg"></i>
+                <div class="text-[11px]">
+                  <span class="font-bold text-emerald-800 block">Verified Merchant</span>
+                  <span class="text-emerald-600">DuitNow Scam Shield Active</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <button onclick="executePayment()" class="w-full py-3.5 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-bold rounded-xl shadow-lg shadow-blue-500/20 text-xs uppercase tracking-wider transition-all">
+            Confirm & Pay Digitally (+20 Drops 💧)
+          </button>
+        </div>
+
+        <div class="glass-card rounded-2xl p-6 border border-slate-200 shadow-sm">
+          <h3 class="text-sm font-bold text-slate-800 mb-4 flex items-center justify-between">
+            <span>Simulated Payment History</span>
+            <span class="text-[10px] font-normal text-slate-400">Live Auto-Updated</span>
+          </h3>
+          <div id="tx-history-list" class="space-y-3">
+            <div class="flex items-center justify-between p-3 bg-slate-50 rounded-xl text-xs">
+              <div class="flex items-center space-x-3">
+                <div class="w-8 h-8 rounded-lg bg-blue-100 text-blue-600 flex items-center justify-center font-bold">
+                  <i class="fa-solid fa-utensils"></i>
+                </div>
+                <div>
+                  <p class="font-bold text-slate-800">Inasis Canteen (Stall 4)</p>
+                  <p class="text-[10px] text-slate-400">DuitNow QR Scan</p>
+                </div>
+              </div>
+              <div class="text-right">
+                <p class="font-extrabold text-slate-800">- RM 8.50</p>
+                <span class="text-[9px] font-bold text-cyan-600 bg-cyan-50 px-2 py-0.5 rounded-full border border-cyan-100">+20 Drops 💧</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- PAGE 4: EDUCATOR & SCAM SHIELD -->
+    <section id="page-educator" class="hidden space-y-8">
+      <div class="max-w-3xl mx-auto space-y-6">
+        <div class="text-center">
+          <span class="px-3 py-1 bg-amber-50 border border-amber-200 text-amber-700 rounded-full text-[11px] font-bold">Interactive Educational Hub</span>
+          <h2 class="text-2xl font-bold text-slate-900 mt-2">UUM Scam Shield & Quiz</h2>
+          <p class="text-xs text-slate-500 mt-1">Identify phishing scams, spot fake QR codes, and earn +10 Water Drops for every correct answer!</p>
+        </div>
+
+        <div class="glass-card rounded-3xl p-6 sm:p-8 border border-slate-200 shadow-lg relative overflow-hidden">
+          <div class="flex items-center justify-between pb-4 mb-6 border-b border-slate-100">
+            <span class="text-xs font-extrabold text-blue-600 bg-blue-50 px-3 py-1 rounded-full" id="quiz-progress-text">Question 1 of 5</span>
+            <span class="text-xs font-bold text-cyan-700 bg-cyan-50 px-3 py-1 rounded-full"><i class="fa-solid fa-droplet mr-1"></i> Reward: +10 Drops</span>
+          </div>
+
+          <div id="quiz-body" class="space-y-6">
+            <h3 id="quiz-question" class="text-base font-bold text-slate-800 leading-relaxed">Loading Question...</h3>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <button onclick="answerQuiz(true)" class="p-4 bg-red-50 hover:bg-red-100/80 border border-red-200 text-red-700 font-bold rounded-2xl transition-all text-xs flex items-center justify-center space-x-2">
+                <i class="fa-solid fa-triangle-exclamation text-base"></i>
+                <span>It's Scam / Phishing</span>
+              </button>
+              <button onclick="answerQuiz(false)" class="p-4 bg-emerald-50 hover:bg-emerald-100/80 border border-emerald-200 text-emerald-700 font-bold rounded-2xl transition-all text-xs flex items-center justify-center space-x-2">
+                <i class="fa-solid fa-circle-check text-base"></i>
+                <span>Safe / Official Payment</span>
+              </button>
+            </div>
+          </div>
+
+          <div id="quiz-feedback" class="hidden mt-6 p-4 rounded-2xl border text-xs space-y-2"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- PAGE 5: CAMPUS REWARDS STORE -->
+    <section id="page-rewards" class="hidden space-y-8">
+      <div>
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
+          <div>
+            <h2 class="text-2xl font-bold text-slate-900">Campus Rewards Marketplace</h2>
+            <p class="text-xs text-slate-500 mt-1">Redeem your hard-earned Points for real discounts and perks across UUM.</p>
+          </div>
+          <div class="flex space-x-2">
+            <button onclick="filterRewards('all')" class="px-3 py-1.5 bg-slate-900 text-white text-xs font-bold rounded-xl">All Rewards</button>
+            <button onclick="filterRewards('food')" class="px-3 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold rounded-xl">Food & Drinks</button>
+            <button onclick="filterRewards('services')" class="px-3 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold rounded-xl">Campus Services</button>
+          </div>
+        </div>
+
+        <div id="rewards-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          
+          <!-- 新用户专属：MIXUE 5元折扣券 (0积分/免费一次性) -->
+          <div id="card-mixue-promo" class="glass-card rounded-2xl p-5 border-2 border-red-400 shadow-red-100 shadow-lg flex flex-col justify-between relative overflow-hidden" data-category="food">
+            <div class="absolute top-0 right-0 bg-red-500 text-white text-[10px] font-bold px-3 py-1 rounded-bl-lg z-10">
+              NEW USER EXCLUSIVE
+            </div>
+            <div>
+              <div class="w-10 h-10 bg-red-100 text-red-600 rounded-xl flex items-center justify-center text-lg font-bold mb-3">
+                <i class="fa-solid fa-ice-cream"></i>
+              </div>
+              <h4 class="font-bold text-slate-800 text-sm">RM 5.00 OFF @ MIXUE Varsity Mall</h4>
+              <p class="text-xs text-slate-500 mt-1">Special one-time free gift for new users! Valid for any boba tea or ice cream.</p>
+            </div>
+            <div class="mt-6 pt-4 border-t border-slate-100 flex items-center justify-between">
+              <span class="text-xs font-extrabold text-emerald-600 bg-emerald-50 px-2.5 py-1 rounded-full border border-emerald-200">FREE (0 PTS)</span>
+              <button onclick="redeemMixuePromo()" class="px-4 py-2 bg-red-600 hover:bg-red-700 text-white font-bold rounded-xl text-xs transition-all shadow-md shadow-red-500/20">
+                Claim Free Promo
+              </button>
+            </div>
+          </div>
+
+          <!-- Voucher 1: Alumni Junction (7 PTS) -->
+          <div class="glass-card rounded-2xl p-5 border border-slate-200 shadow-sm flex flex-col justify-between" data-category="food">
+            <div>
+              <div class="w-10 h-10 bg-amber-100 text-amber-700 rounded-xl flex items-center justify-center text-lg font-bold mb-3">
+                <i class="fa-solid fa-utensils"></i>
+              </div>
+              <h4 class="font-bold text-slate-800 text-sm">RM 3.00 OFF Chicken Chop / Mee Siam</h4>
+              <p class="text-xs text-slate-500 mt-1">Valid at Alumni Junction Cafe.</p>
+            </div>
+            <div class="mt-6 pt-4 border-t border-slate-100 flex items-center justify-between">
+              <span class="text-xs font-extrabold text-amber-600 bg-amber-50 px-2.5 py-1 rounded-full border border-amber-200">7 PTS</span>
+              <button onclick="redeemVoucher('RM 3.00 OFF Chicken Chop @ Alumni Junction', 7)" class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-xl text-xs transition-all">
+                Redeem
+              </button>
+            </div>
+          </div>
+
+          <!-- Voucher 2: Cafe Hijau Kuning (5 PTS) -->
+          <div class="glass-card rounded-2xl p-5 border border-slate-200 shadow-sm flex flex-col justify-between" data-category="food">
+            <div>
+              <div class="w-10 h-10 bg-red-100 text-red-700 rounded-xl flex items-center justify-center text-lg font-bold mb-3">
+                <i class="fa-solid fa-bowl-rice"></i>
+              </div>
+              <h4 class="font-bold text-slate-800 text-sm">Free Drink with Yasmeen Nasi Kandar</h4>
+              <p class="text-xs text-slate-500 mt-1">Valid at Cafe Hijau Kuning.</p>
+            </div>
+            <div class="mt-6 pt-4 border-t border-slate-100 flex items-center justify-between">
+              <span class="text-xs font-extrabold text-amber-600 bg-amber-50 px-2.5 py-1 rounded-full border border-amber-200">5 PTS</span>
+              <button onclick="redeemVoucher('Free Drink @ Cafe Hijau Kuning', 5)" class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-xl text-xs transition-all">
+                Redeem
+              </button>
+            </div>
+          </div>
+
+          <!-- Voucher 3: Proton Cafeteria (6 PTS) -->
+          <div class="glass-card rounded-2xl p-5 border border-slate-200 shadow-sm flex flex-col justify-between" data-category="food">
+            <div>
+              <div class="w-10 h-10 bg-orange-100 text-orange-700 rounded-xl flex items-center justify-center text-lg font-bold mb-3">
+                <i class="fa-solid fa-bowl-food"></i>
+              </div>
+              <h4 class="font-bold text-slate-800 text-sm">RM 2.00 OFF Chinese Halal Noodles</h4>
+              <p class="text-xs text-slate-500 mt-1">Valid at Proton Cafeteria.</p>
+            </div>
+            <div class="mt-6 pt-4 border-t border-slate-100 flex items-center justify-between">
+              <span class="text-xs font-extrabold text-amber-600 bg-amber-50 px-2.5 py-1 rounded-full border border-amber-200">6 PTS</span>
+              <button onclick="redeemVoucher('RM 2.00 OFF Chinese Halal Noodles @ Proton', 6)" class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-xl text-xs transition-all">
+                Redeem
+              </button>
+            </div>
+          </div>
+
+          <!-- Voucher 4: Cafe Inasis TNB (6 PTS) -->
+          <div class="glass-card rounded-2xl p-5 border border-slate-200 shadow-sm flex flex-col justify-between" data-category="food">
+            <div>
+              <div class="w-10 h-10 bg-amber-100 text-amber-700 rounded-xl flex items-center justify-center text-lg font-bold mb-3">
+                <i class="fa-solid fa-fire-burner"></i>
+              </div>
+              <h4 class="font-bold text-slate-800 text-sm">RM 2.00 OFF Fresh Noodles / Nasi Daging</h4>
+              <p class="text-xs text-slate-500 mt-1">Valid at Cafe Inasis TNB.</p>
+            </div>
+            <div class="mt-6 pt-4 border-t border-slate-100 flex items-center justify-between">
+              <span class="text-xs font-extrabold text-amber-600 bg-amber-50 px-2.5 py-1 rounded-full border border-amber-200">6 PTS</span>
+              <button onclick="redeemVoucher('RM 2.00 OFF Signature Meal @ Inasis TNB', 6)" class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-xl text-xs transition-all">
+                Redeem
+              </button>
+            </div>
+          </div>
+
+          <!-- Voucher 5: TM Canteen (5 PTS) -->
+          <div class="glass-card rounded-2xl p-5 border border-slate-200 shadow-sm flex flex-col justify-between" data-category="food">
+            <div>
+              <div class="w-10 h-10 bg-red-100 text-red-700 rounded-xl flex items-center justify-center text-lg font-bold mb-3">
+                <i class="fa-solid fa-burger"></i>
+              </div>
+              <h4 class="font-bold text-slate-800 text-sm">RM 1.50 OFF Burger @ TM Canteen</h4>
+              <p class="text-xs text-slate-500 mt-1">Redeemable at TM Canteen burger stall.</p>
+            </div>
+            <div class="mt-6 pt-4 border-t border-slate-100 flex items-center justify-between">
+              <span class="text-xs font-extrabold text-amber-600 bg-amber-50 px-2.5 py-1 rounded-full border border-amber-200">5 PTS</span>
+              <button onclick="redeemVoucher('RM 1.50 OFF Burger @ TM Canteen', 5)" class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-xl text-xs transition-all">
+                Redeem
+              </button>
+            </div>
+          </div>
+
+          <!-- Voucher 6: Varsity Mall F&B (7 PTS) -->
+          <div class="glass-card rounded-2xl p-5 border border-slate-200 shadow-sm flex flex-col justify-between" data-category="food">
+            <div>
+              <div class="w-10 h-10 bg-blue-100 text-blue-700 rounded-xl flex items-center justify-center text-lg font-bold mb-3">
+                <i class="fa-solid fa-mug-hot"></i>
+              </div>
+              <h4 class="font-bold text-slate-800 text-sm">RM 3.00 OFF Richiamo / ZUS Coffee</h4>
+              <p class="text-xs text-slate-500 mt-1">Valid at Varsity Mall coffee outlets.</p>
+            </div>
+            <div class="mt-6 pt-4 border-t border-slate-100 flex items-center justify-between">
+              <span class="text-xs font-extrabold text-amber-600 bg-amber-50 px-2.5 py-1 rounded-full border border-amber-200">7 PTS</span>
+              <button onclick="redeemVoucher('RM 3.00 OFF ZUS/Richiamo Coffee', 7)" class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-xl text-xs transition-all">
+                Redeem
+              </button>
+            </div>
+          </div>
+
+          <!-- Voucher 7: Varsity Mall Printing (7 PTS) -->
+          <div class="glass-card rounded-2xl p-5 border border-slate-200 shadow-sm flex flex-col justify-between" data-category="services">
+            <div>
+              <div class="w-10 h-10 bg-emerald-100 text-emerald-700 rounded-xl flex items-center justify-center text-lg font-bold mb-3">
+                <i class="fa-solid fa-print"></i>
+              </div>
+              <h4 class="font-bold text-slate-800 text-sm">RM 4.00 Printing & Stationery Voucher</h4>
+              <p class="text-xs text-slate-500 mt-1">Valid at Varsity Mall printing shop.</p>
+            </div>
+            <div class="mt-6 pt-4 border-t border-slate-100 flex items-center justify-between">
+              <span class="text-xs font-extrabold text-amber-600 bg-amber-50 px-2.5 py-1 rounded-full border border-amber-200">7 PTS</span>
+              <button onclick="redeemVoucher('RM 4.00 Printing Voucher @ Varsity Mall', 7)" class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-xl text-xs transition-all">
+                Redeem
+              </button>
+            </div>
+          </div>
+
+          <!-- Voucher 8: SME Bank Cafe (6 PTS) -->
+          <div class="glass-card rounded-2xl p-5 border border-slate-200 shadow-sm flex flex-col justify-between" data-category="food">
+            <div>
+              <div class="w-10 h-10 bg-amber-100 text-amber-700 rounded-xl flex items-center justify-center text-lg font-bold mb-3">
+                <i class="fa-solid fa-burger"></i>
+              </div>
+              <h4 class="font-bold text-slate-800 text-sm">RM 2.00 OFF Burger / Mee Siam</h4>
+              <p class="text-xs text-slate-500 mt-1">Redeemable at SME Bank Cafe.</p>
+            </div>
+            <div class="mt-6 pt-4 border-t border-slate-100 flex items-center justify-between">
+              <span class="text-xs font-extrabold text-amber-600 bg-amber-50 px-2.5 py-1 rounded-full border border-amber-200">6 PTS</span>
+              <button onclick="redeemVoucher('RM 2.00 OFF Burger @ SME Bank Cafe', 6)" class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-xl text-xs transition-all">
+                Redeem
+              </button>
+            </div>
+          </div>
+
+          <!-- Voucher 9: BR Bank Cafe (5 PTS) -->
+          <div class="glass-card rounded-2xl p-5 border border-slate-200 shadow-sm flex flex-col justify-between" data-category="food">
+            <div>
+              <div class="w-10 h-10 bg-orange-100 text-orange-700 rounded-xl flex items-center justify-center text-lg font-bold mb-3">
+                <i class="fa-solid fa-utensils"></i>
+              </div>
+              <h4 class="font-bold text-slate-800 text-sm">Free Teh Tarik with Breakfast</h4>
+              <p class="text-xs text-slate-500 mt-1">Valid with Roti Canai / Nasi Lemak at BR Bank Cafe.</p>
+            </div>
+            <div class="mt-6 pt-4 border-t border-slate-100 flex items-center justify-between">
+              <span class="text-xs font-extrabold text-amber-600 bg-amber-50 px-2.5 py-1 rounded-full border border-amber-200">5 PTS</span>
+              <button onclick="redeemVoucher('Free Teh Tarik @ BR Bank Cafe', 5)" class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-xl text-xs transition-all">
+                Redeem
+              </button>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- PAGE 6: TRUSTED GATEWAYS -->
+    <section id="page-trust" class="hidden space-y-8">
+      <div class="max-w-3xl mx-auto space-y-6">
+        <div class="text-center">
+          <h2 class="text-2xl font-bold text-slate-900">Verified & Trusted Gateways</h2>
+          <p class="text-xs text-slate-500 mt-1">Pay Safe strictly integrates with Bank Negara Malaysia-approved payment infrastructure.</p>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+          <div class="glass-card rounded-2xl p-6 border border-slate-200 shadow-sm hover:shadow-md transition-all text-center space-y-4">
+            <div class="w-16 h-16 bg-pink-50 text-pink-600 rounded-2xl flex items-center justify-center text-3xl mx-auto shadow-inner">
+              <i class="fa-solid fa-qrcode"></i>
+            </div>
+            <div>
+              <h3 class="font-bold text-slate-800">DuitNow QR Official Portal</h3>
+              <p class="text-xs text-slate-500 mt-1">Malaysia’s National QR Standard managed by PayNet.</p>
+            </div>
+            <a href="https://www.tngdigital.com.my/get-started/transfer/duitnow/#QR" target="_blank" rel="noopener noreferrer" title="Redirects to DuitNow QR Info Portal" class="inline-flex items-center space-x-2 px-5 py-2.5 bg-pink-600 hover:bg-pink-700 text-white text-xs font-bold rounded-xl shadow-md transition-all">
+              <span>Open DuitNow Guide</span>
+              <i class="fa-solid fa-arrow-up-right-from-square"></i>
+            </a>
+          </div>
+
+          <div class="glass-card rounded-2xl p-6 border border-slate-200 shadow-sm hover:shadow-md transition-all text-center space-y-4">
+            <div class="w-16 h-16 bg-blue-50 text-blue-600 rounded-2xl flex items-center justify-center text-3xl mx-auto shadow-inner">
+              <i class="fa-solid fa-building-columns"></i>
+            </div>
+            <div>
+              <h3 class="font-bold text-slate-800">FPX Online Banking</h3>
+              <p class="text-xs text-slate-500 mt-1">Direct real-time online bank transfers in Malaysia.</p>
+            </div>
+            <button onclick="openFpxModal()" class="inline-flex items-center space-x-2 px-5 py-2.5 bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold rounded-xl shadow-md transition-all">
+              <span>Select Bank Gateway</span>
+              <i class="fa-solid fa-layer-group"></i>
+            </button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Modal 1: Balance & Add Money Overlay -->
+  <div id="modal-balance" class="fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+    <div class="bg-white rounded-3xl p-6 sm:p-8 max-w-md w-full shadow-2xl border border-slate-100 space-y-6">
+      <div class="flex items-center justify-between border-b border-slate-100 pb-4">
+        <h3 class="font-bold text-slate-800 text-base flex items-center space-x-2">
+          <i class="fa-solid fa-wallet text-emerald-600"></i>
+          <span>Manage Wallet Balance</span>
+        </h3>
+        <button onclick="closeBalanceModal()" class="text-slate-400 hover:text-slate-600 text-lg">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+      </div>
+
+      <div class="bg-emerald-50 rounded-2xl p-5 border border-emerald-100 text-center">
+        <span class="text-xs font-semibold text-emerald-700 uppercase tracking-wider">Current Balance</span>
+        <h2 id="modal-balance-val" class="text-3xl font-extrabold text-emerald-800 mt-1">RM 150.00</h2>
+      </div>
+
+      <div class="space-y-3">
+        <label class="text-xs font-bold text-slate-700">Add Money (RM):</label>
+        <input type="number" id="input-add-money" placeholder="Enter amount (e.g. 50)" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 text-sm font-bold text-slate-800 focus:ring-2 focus:ring-blue-500 outline-none" />
+        <div class="flex gap-2">
+          <button onclick="quickAddMoney(10)" class="flex-1 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold rounded-lg">+RM 10</button>
+          <button onclick="quickAddMoney(20)" class="flex-1 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold rounded-lg">+RM 20</button>
+          <button onclick="quickAddMoney(50)" class="flex-1 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold rounded-lg">+RM 50</button>
+        </div>
+      </div>
+
+      <button onclick="confirmAddMoney()" class="w-full py-3 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-xl text-xs uppercase tracking-wider shadow-md transition-all">
+        Top Up Instantly
+      </button>
+    </div>
+  </div>
+
+  <!-- Modal 2: Points History & Redeemed Vouchers Overlay (Default 10 PTS) -->
+  <div id="modal-points" class="fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+    <div class="bg-white rounded-3xl p-6 sm:p-8 max-w-lg w-full shadow-2xl border border-slate-100 space-y-6">
+      <div class="flex items-center justify-between border-b border-slate-100 pb-4">
+        <h3 class="font-bold text-slate-800 text-base flex items-center space-x-2">
+          <i class="fa-solid fa-star text-amber-500"></i>
+          <span>PTS Points & Vouchers Ledger</span>
+        </h3>
+        <button onclick="closePointsModal()" class="text-slate-400 hover:text-slate-600 text-lg">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+      </div>
+
+      <div class="grid grid-cols-3 gap-2 sm:gap-3 text-center w-full">
+        <div class="bg-amber-50 p-2 sm:p-3 rounded-2xl border border-amber-100 flex flex-col justify-center">
+          <span class="text-[9px] sm:text-[10px] font-bold text-amber-700 uppercase leading-tight">Available</span>
+          <p id="modal-points-avail" class="text-sm sm:text-base font-extrabold text-amber-800 mt-1">10 PTS</p>
+        </div>
+
+        <div class="bg-blue-50 p-2 sm:p-3 rounded-2xl border border-blue-100 flex flex-col justify-center">
+          <span class="text-[9px] sm:text-[10px] font-bold text-blue-700 uppercase leading-tight">Total Earned</span>
+          <p id="modal-points-earned" class="text-sm sm:text-base font-extrabold text-blue-800 mt-1">10 PTS</p>
+        </div>
+
+        <div class="bg-slate-50 p-2 sm:p-3 rounded-2xl border border-slate-200 flex flex-col justify-center">
+          <span class="text-[9px] sm:text-[10px] font-bold text-slate-500 uppercase leading-tight">Spent</span>
+          <p id="modal-points-spent" class="text-sm sm:text-base font-extrabold text-slate-700 mt-1">0 PTS</p>
+        </div>
+      </div>
+
+      <div class="space-y-3">
+        <h4 class="text-xs font-bold text-slate-700 uppercase tracking-wider">Redeemed Vouchers & Rewards</h4>
+        <div id="redeemed-vouchers-list" class="max-h-48 overflow-y-auto space-y-2 pr-1 custom-scrollbar">
+          <p class="text-xs text-slate-400 text-center py-4">No vouchers redeemed yet. Water your tree to earn points and redeem above!</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal 3: FPX Bank Selector Overlay -->
+  <div id="modal-fpx" class="fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+    <div class="bg-white rounded-3xl p-6 max-w-md w-full shadow-2xl border border-slate-100 space-y-5">
+      <div class="flex items-center justify-between border-b border-slate-100 pb-3">
+        <h3 class="font-bold text-slate-800 text-base flex items-center space-x-2">
+          <i class="fa-solid fa-building-columns text-blue-600"></i>
+          <span>Select Online Banking Gateway</span>
+        </h3>
+        <button onclick="closeFpxModal()" class="text-slate-400 hover:text-slate-600 text-lg">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+      </div>
+
+      <p class="text-xs text-slate-500">Choose your preferred FPX participating bank to access their official portal:</p>
+
+      <div class="space-y-2">
+        <a href="https://www.pbebank.com/en/" target="_blank" rel="noopener noreferrer" class="flex items-center justify-between p-3 rounded-xl border border-slate-200 hover:border-blue-500 hover:bg-blue-50/50 transition-all text-xs font-bold text-slate-800">
+          <span class="flex items-center space-x-3">
+            <span class="w-7 h-7 rounded-lg bg-red-100 text-red-700 flex items-center justify-center text-xs">PBB</span>
+            <span>Public Bank Berhad</span>
+          </span>
+          <i class="fa-solid fa-arrow-up-right-from-square text-slate-400"></i>
+        </a>
+
+        <a href="https://www.rhbgroup.com/index.html" target="_blank" rel="noopener noreferrer" class="flex items-center justify-between p-3 rounded-xl border border-slate-200 hover:border-blue-500 hover:bg-blue-50/50 transition-all text-xs font-bold text-slate-800">
+          <span class="flex items-center space-x-3">
+            <span class="w-7 h-7 rounded-lg bg-blue-100 text-blue-700 flex items-center justify-center text-xs">RHB</span>
+            <span>RHB Bank</span>
+          </span>
+          <i class="fa-solid fa-arrow-up-right-from-square text-slate-400"></i>
+        </a>
+
+        <a href="https://www.mybsn.com.my/mybsn/login/login.do" target="_blank" rel="noopener noreferrer" class="flex items-center justify-between p-3 rounded-xl border border-slate-200 hover:border-blue-500 hover:bg-blue-50/50 transition-all text-xs font-bold text-slate-800">
+          <span class="flex items-center space-x-3">
+            <span class="w-7 h-7 rounded-lg bg-teal-100 text-teal-700 flex items-center justify-center text-xs">BSN</span>
+            <span>Bank Simpanan Nasional (myBSN)</span>
+          </span>
+          <i class="fa-solid fa-arrow-up-right-from-square text-slate-400"></i>
+        </a>
+
+        <a href="https://www.irakyat.com.my/" target="_blank" rel="noopener noreferrer" class="flex items-center justify-between p-3 rounded-xl border border-slate-200 hover:border-blue-500 hover:bg-blue-50/50 transition-all text-xs font-bold text-slate-800">
+          <span class="flex items-center space-x-3">
+            <span class="w-7 h-7 rounded-lg bg-amber-100 text-amber-700 flex items-center justify-center text-xs">iRKB</span>
+            <span>Bank Rakyat (iRakyat)</span>
+          </span>
+          <i class="fa-solid fa-arrow-up-right-from-square text-slate-400"></i>
+        </a>
+
+        <a href="https://www.maybank2u.com.my/home/m2u/common/login.do" target="_blank" rel="noopener noreferrer" class="flex items-center justify-between p-3 rounded-xl border border-slate-200 hover:border-blue-500 hover:bg-blue-50/50 transition-all text-xs font-bold text-slate-800">
+          <span class="flex items-center space-x-3">
+            <span class="w-7 h-7 rounded-lg bg-yellow-100 text-yellow-800 flex items-center justify-center text-xs">M2U</span>
+            <span>Maybank (Maybank2u)</span>
+          </span>
+          <i class="fa-solid fa-arrow-up-right-from-square text-slate-400"></i>
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal 4: Payment Success Overlay -->
+  <div id="modal-payment-success" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4 transition-opacity duration-300">
+    <div id="payment-success-content" class="bg-white rounded-3xl p-6 sm:p-8 max-w-sm w-full shadow-2xl border border-slate-100 text-center space-y-6 transform transition-all duration-300 scale-95 opacity-0">
+      <div class="mx-auto w-24 h-24 bg-emerald-100 rounded-full flex items-center justify-center relative">
+        <div class="absolute inset-0 bg-emerald-200 rounded-full animate-ping opacity-75"></div>
+        <i class="fa-solid fa-check text-5xl text-emerald-600 relative z-10"></i>
+      </div>
+
+      <div class="space-y-2">
+        <h3 class="text-2xl font-extrabold text-slate-800">Payment Successful!</h3>
+        <p class="text-slate-500 text-sm" id="payment-success-desc">You paid RM 0.00 to Merchant.</p>
+        <div class="inline-block mt-2 px-3 py-1 bg-cyan-50 border border-cyan-200 text-cyan-700 rounded-full text-xs font-bold">
+          <i class="fa-solid fa-droplet mr-1"></i> +20 Water Drops Earned
+        </div>
+      </div>
+
+      <button onclick="closePaymentSuccessModal()" class="w-full py-3.5 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-xl text-sm uppercase tracking-wider shadow-lg shadow-emerald-500/30 transition-all">
+        Confirm
+      </button>
+    </div>
+  </div>
+
+  <!-- Modal 5: Login / Mascot Pop-out -->
+  <div id="modal-login" class="fixed inset-0 bg-slate-900/80 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4 transition-opacity duration-300">
+    <div id="login-content" class="bg-white rounded-3xl p-8 max-w-sm w-full shadow-2xl border border-slate-100 text-center space-y-6 transform transition-all duration-300 scale-95 opacity-0 relative">
+      <button onclick="closeLoginModal()" class="absolute top-4 right-5 text-slate-400 hover:text-slate-600 text-xl">
+        <i class="fa-solid fa-xmark"></i>
+      </button>
+
+      <h3 class="text-2xl font-extrabold text-slate-800 tracking-tight">Login Successful!</h3>
+
+      <div class="flex justify-center py-2">
+        <img src="assets/images/moneymoneymoney.gif" alt="Money Mascot Celebration" class="w-48 h-auto object-contain drop-shadow-xl animate-bounce" style="animation-duration: 2s" />
+      </div>
+
+      <p class="text-sm text-slate-500 font-medium">Welcome back! Get ready to earn more Water Drops & grow your Eco Tree today.</p>
+
+      <button onclick="closeLoginModal()" class="w-full py-3.5 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-bold rounded-xl text-sm uppercase tracking-wider shadow-lg shadow-blue-500/30 transition-all">
+        Let's Go!
+      </button>
+    </div>
+  </div>
+
+  <!-- Modal 6: 大树长成恭喜弹窗 -->
+  <div id="modal-tree-complete" class="fixed inset-0 bg-slate-900/80 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4 transition-opacity duration-300">
+    <div id="tree-complete-content" class="bg-white rounded-3xl p-8 max-w-sm w-full shadow-2xl border border-slate-100 text-center space-y-6 transform transition-all duration-300 scale-95 opacity-0 relative">
+      <div class="mx-auto w-28 h-28 bg-emerald-100 rounded-full flex items-center justify-center relative shadow-lg shadow-emerald-200">
+        <div class="absolute inset-0 bg-emerald-200 rounded-full animate-ping opacity-75"></div>
+        <i class="fa-solid fa-tree text-6xl text-emerald-600 relative z-10 animate-bounce" style="animation-duration: 1.5s"></i>
+      </div>
+
+      <div class="space-y-2">
+        <span class="px-3 py-1 bg-amber-100 border border-amber-300 text-amber-800 rounded-full text-xs font-bold uppercase tracking-wider">Growth Completed!</span>
+        <h3 class="text-2xl font-extrabold text-slate-800 pt-1">Tree Fully Grown!</h3>
+        <p class="text-slate-500 text-xs leading-relaxed">
+          Awesome job! You reached <strong>100 Water Drops</strong>. Your tree has matured into a majestic Eco Tree!
+        </p>
+      </div>
+
+      <div class="p-4 bg-amber-50 border border-amber-200 rounded-2xl flex items-center justify-between">
+        <span class="text-xs font-bold text-amber-800">Reward Earned:</span>
+        <span class="text-sm font-extrabold text-amber-600 flex items-center gap-1">
+          <i class="fa-solid fa-star"></i> +1 PTS Point
+        </span>
+      </div>
+
+      <button onclick="collectTreeReward()" class="w-full py-3.5 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white font-bold rounded-xl text-sm uppercase tracking-wider shadow-lg shadow-emerald-500/30 transition-all">
+        Claim Reward & Plant New Sapling
+      </button>
+    </div>
+  </div>
+
+  <!-- Toast Notification Container -->
+  <div id="toast-container" class="fixed bottom-5 right-5 z-50 flex flex-col space-y-2 pointer-events-none"></div>
+
+  <!-- Footer -->
+  <footer class="bg-white border-t border-slate-200 py-6 text-center text-xs text-slate-400">
+    <p>© 2026 Pay Safe — PayNet Hackathon Front-End Prototype for Universiti Utara Malaysia.</p>
+  </footer>
+
+  <script src="app.js"></script>
+</body>
+</html>
