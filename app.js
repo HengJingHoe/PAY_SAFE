@@ -9,6 +9,7 @@ let redeemedVouchers = [];
 let hasDigitalSwitchDiscount = false;
 let hasClaimedMixuePromo = false; // 新增：标记 MIXUE 免费券是否已领取
 
+
 // 5 道防诈测试题目
 const quizData = [
   {
@@ -196,7 +197,6 @@ function redeemMixuePromo() {
 
   showToast("🎉 Free MIXUE Promo Claimed! View code in Points Ledger.");
 
-  // 加上淡出隐藏动画并从 DOM 中移除卡片
   const mixueCard = document.getElementById("card-mixue-promo");
   if (mixueCard) {
     mixueCard.style.transition = "all 0.5s ease";
@@ -346,6 +346,8 @@ function toggleVoucherStatus(index) {
 
 // Payment Simulator Logic
 function setPayMode(mode) {
+  currentPayMode = mode; // 更新当前选择的支付模式
+
   if (mode === "qr") {
     document.getElementById("sim-qr-box").classList.remove("hidden");
     document.getElementById("sim-acc-box").classList.add("hidden");
@@ -407,6 +409,10 @@ function executePayment() {
   totalDropsEarned += 20;
   updateHeaderDisplays();
 
+  // 根据 currentPayMode 区分文案和图标
+  const payTypeLabel = currentPayMode === 'qr' ? 'DuitNow QR Scan' : 'Transfer Successful';
+  const payTypeIcon = currentPayMode === 'qr' ? 'fa-qrcode' : 'fa-arrow-right-arrow-left';
+
   const historyList = document.getElementById("tx-history-list");
   const item = document.createElement("div");
   item.className =
@@ -414,11 +420,11 @@ function executePayment() {
   item.innerHTML = `
     <div class="flex items-center space-x-3">
       <div class="w-8 h-8 rounded-lg bg-blue-100 text-blue-600 flex items-center justify-center font-bold">
-        <i class="fa-solid fa-store"></i>
+        <i class="fa-solid ${payTypeIcon}"></i>
       </div>
       <div>
         <p class="font-bold text-slate-800">${merchant}</p>
-        <p class="text-[10px] text-slate-400">Digital Payment Verified</p>
+        <p class="text-[10px] text-slate-400">${payTypeLabel}</p>
       </div>
     </div>
     <div class="text-right">
